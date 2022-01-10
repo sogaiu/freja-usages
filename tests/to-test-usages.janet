@@ -83,7 +83,7 @@
     # =>
     2 "line-10")
 
-    
+    :smile
 
   (my-fn 8)
   (_verify/end-tests)

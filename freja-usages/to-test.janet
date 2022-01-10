@@ -388,11 +388,15 @@
              (wrap-as-test-call start-zloc end-zloc test-label)))))
   # navigate back out to top of block
   (when found-test
-    # morph comment block into upscope block if a test was found
+    # morph comment block into plain tuple -- to be unwrapped later
     (-> curr-zloc
         j/up
         j/down
         (j/replace [:whitespace @{} "\n"])
+        # begin hack to prevent trailing whitespace once unwrapping occurs
+        j/rightmost
+        (j/insert-right [:keyword @{} ":smile"])
+        # end of hack
         j/up)))
 
 (comment
@@ -435,7 +439,7 @@
           "  # => right"                 "\n"
           `  2 "line-10 => right")`      "\n"
           "\n"
-          "  )")
+          "  :smile)")
 
   )
 
@@ -483,7 +487,7 @@
           "  # left => right"             "\n"
           `  2 "line-10 left => right")`  "\n"
           "\n"
-          "  )")
+          "  :smile)")
 
   )
 
@@ -586,7 +590,7 @@
           "  # =>"                "\n"
           `  2 "line-16")`        "\n"
           "\n"
-          "  "                    "\n"
+          "  :smile"              "\n"
           "\n"
           "(defn your-fn"         "\n"
           "  [y]"                 "\n"
@@ -609,7 +613,7 @@
           "\n"
           "  (def c 2)"           "\n"
           "\n"
-          "  "                    "\n")
+          "  :smile"              "\n")
 
   )
 
@@ -661,7 +665,7 @@
           "  # =>"           "\n"
           `  9 "line-15")`   "\n"
           "\n"
-          "  ")
+          "  :smile")
 
   )
 
