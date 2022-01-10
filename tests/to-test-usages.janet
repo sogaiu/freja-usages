@@ -73,7 +73,7 @@
     [x]
     (+ x 1))
 
-  (upscope
+   
 
     (def a 1)
 
@@ -82,7 +82,7 @@
     # =>
     2 "line-10")
 
-    )
+    
 
   (my-fn 8)
   (_verify/end-tests)
