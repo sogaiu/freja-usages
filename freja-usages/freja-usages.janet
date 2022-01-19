@@ -4,7 +4,7 @@
 
 (import freja/evaling)
 
-(import ./to-test :as t)
+(import ../usages/to-test :as t)
 
 # XXX: for investigation
 (defn current-gb
@@ -37,6 +37,6 @@
     (evaling/eval-it state/user-env test-src))
   gb)
 
-(put-in dh/gb-binds
-        [:control :shift :u]
-        (comp dh/reset-blink run-usages))
+(dh/set-key dh/gb-binds
+            [:control :shift :u]
+            (comp dh/reset-blink run-usages))
