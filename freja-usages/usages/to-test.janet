@@ -726,7 +726,8 @@
                       :red 31
                       :white 37
                       :yellow 33)]
-      (prin (string "\e[" color-num "m"
+      (prin msg)
+      '(prin (string "\e[" color-num "m"
                     msg
                     "\e[0m"))))
 
