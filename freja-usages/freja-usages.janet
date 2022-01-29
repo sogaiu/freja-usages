@@ -37,6 +37,3 @@
     (evaling/eval-it state/user-env test-src))
   gb)
 
-(dh/set-key dh/gb-binds
-            [:control :shift :u]
-            (comp dh/reset-blink run-usages))
