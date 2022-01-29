@@ -379,6 +379,7 @@
                               #
                               test-expr-zloc)
                  end-zloc expected-expr-zloc
+                 # XXX: use `attrs` here?
                  ti-line-no ((get (j/node ti-zloc) 1) :bl)
                  test-label (string `"`
                                     `line-` ti-line-no
@@ -493,6 +494,7 @@
 
 (defn rewrite
   [src]
+  (var changed nil)
   (var curr-zloc
     (-> (l/ast src)
         j/zip-down
@@ -513,12 +515,15 @@
       (set curr-zloc
            (if-let [rewritten-zloc
                     (rewrite-comment-zloc comment-zloc)]
-             (j/unwrap rewritten-zloc)
+             (do
+               (set changed true)
+               (j/unwrap rewritten-zloc))
              comment-zloc))
       (break)))
-  (-> curr-zloc
-      j/root
-      l/code))
+  (when changed
+    (-> curr-zloc
+        j/root
+        l/code)))
 
 (comment
 
@@ -709,13 +714,6 @@
     []
     (set _verify/end-time (os/clock)))
 
-  (defn _verify/dump-results
-    []
-    (if-let [test-out (dyn :usages-as-tests/test-out)]
-      (spit test-out (marshal _verify/test-results))
-      # XXX: could this sometimes have problems?
-      (printf "%p" _verify/test-results)))
-
   (defn _verify/print-color
     [msg color]
     # XXX: what if color doesn't match...
@@ -728,8 +726,7 @@
                       :red 31
                       :white 37
                       :yellow 33)]
-      (prin msg)
-      '(prin (string "\e[" color-num "m"
+      (prin (string "\e[" color-num "m"
                     msg
                     "\e[0m"))))
 
@@ -817,22 +814,24 @@
     (_verify/print-color total-tests :green)
     (print " passed")
     (_verify/print-dashes)
-    :breathe)
-
+    (when (not= total-passed total-tests)
+      (os/exit 1)))
   ``)
 
 (defn rewrite-as-test-file
   [src]
-  (string verify-as-string
-          "\n"
-          "(_verify/start-tests)"
-          "\n"
-          (rewrite src)
-          "\n"
-          "(_verify/end-tests)"
-          "\n"
-          "(_verify/report)"
-          "\n"))
+  (when (not (empty? src))
+    (when-let [rewritten (rewrite src)]
+      (string verify-as-string
+              "\n"
+              "(_verify/start-tests)"
+              "\n"
+              rewritten
+              "\n"
+              "(_verify/end-tests)"
+              "\n"
+              "(_verify/report)"
+              "\n"))))
 
 # no tests so won't be executed
 (comment

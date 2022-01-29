@@ -4,7 +4,7 @@
 
 (import freja/evaling)
 
-(import ../usages/to-test :as t)
+(import ./usages/to-test :as t)
 
 # XXX: for investigation
 (defn current-gb
