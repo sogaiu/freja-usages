@@ -814,9 +814,7 @@
     (prin " of ")
     (_verify/print-color total-tests :green)
     (print " passed")
-    (_verify/print-dashes)
-    (when (not= total-passed total-tests)
-      (os/exit 1)))
+    (_verify/print-dashes))
   ``)
 
 (defn rewrite-as-test-file
